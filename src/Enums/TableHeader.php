@@ -2,29 +2,30 @@
 
 namespace LaravelEnso\Upgrade\Enums;
 
-use LaravelEnso\Enums\Services\Enum;
+use Illuminate\Support\Str;
+use LaravelEnso\Enums\Traits\Enum;
 
-class TableHeader extends Enum
+enum TableHeader: int
 {
-    public const NrCrt = 1;
-    public const Package = 2;
-    public const Upgrade = 3;
-    public const Applicable = 4;
-    public const Manual = 5;
-    public const Priority = 6;
-    public const Migration = 7;
-    public const Ran = 8;
-    public const LastModifiedAt = 9;
+    use Enum;
 
-    protected static array $data = [
-        self::NrCrt => 'Nr Crt',
-        self::Package => 'Package',
-        self::Upgrade => 'Upgrade',
-        self::Applicable => 'Applicable',
-        self::Manual => 'Manual',
-        self::Priority => 'Priority',
-        self::Migration => 'Migration',
-        self::Ran => 'Ran',
-        self::LastModifiedAt => 'Last Modified At',
-    ];
+    case NrCrt = 1;
+    case Package = 2;
+    case Upgrade = 3;
+    case Applicable = 4;
+    case Manual = 5;
+    case Priority = 6;
+    case Migration = 7;
+    case Ran = 8;
+    case LastModifiedAt = 9;
+
+    public static function labels(): array
+    {
+        return array_map(fn ($case) => $case->label(), self::cases());
+    }
+
+    public function label(): string
+    {
+        return Str::of($this->name)->snake(' ')->title();
+    }
 }
