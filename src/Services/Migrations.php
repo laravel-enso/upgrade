@@ -17,7 +17,7 @@ class Migrations extends CustomUpgrade
 
     public function migrateData(): void
     {
-        $to = Collection::wrap($this->upgrade->to())->sortKey();
+        $to = Collection::wrap($this->upgrade->to())->sortKeys();
         $from = Collection::wrap($this->upgrade->from())->sortKeys();
 
         $invalidMapping = $to->count() !== $from->count()

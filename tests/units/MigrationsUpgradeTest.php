@@ -1,45 +1,37 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Config;
+use LaravelEnso\Helpers\Exceptions\EnsoException;
 use LaravelEnso\Permissions\Models\Permission;
-use LaravelEnso\Roles\Models\Role;
-use LaravelEnso\Upgrade\Contracts\MigratesStructure;
 use LaravelEnso\Upgrade\Contracts\RenamesMigrations;
 use LaravelEnso\Upgrade\Services\Database;
-use LaravelEnso\Upgrade\Services\Structure;
-use LaravelEnso\Upgrade\Traits\StructureMigration;
+use LaravelEnso\Upgrade\Services\Migrations;
 use Tests\TestCase;
 
 class MigrationsUpgradeTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected RenamesMigrations $upgrade;
-    protected $defaultRole;
-    protected $secondaryRole;
+    // protected RenamesMigrations $upgrade;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    // protected function setUp(): void
+    // {
+    // parent::setUp();
 
-        $this->upgrade = new TestStructureMigration();
-
-        $this->defaultRole = $this->role(Config::get('enso.config.defaultRole'));
-
-        $this->secondaryRole = $this->role('secondaryRole');
-    }
+    // $this->upgrade = new TestRenamesMigrations();
+    // }
 
     /** @test */
-    public function can_migrate()
+    public function will_throw_exception_on_argument_count_mismatch()
     {
-        $this->upgrade->permissions = [
-            ['name' => 'test', 'description' => 'test', 'is_default' => true],
-        ];
+        $this->expectException(EnsoException::class);
 
-        $this->migrateStructure();
+        $mock = $this->createMock(TestRenamesMigrations::class);
 
-        $this->assertTrue(Permission::whereName('test')->exists());
+        $mock->method('to')->willReturn(['foo']);
+        $mock->method('from')->willReturn(['foo', 'bar']);
+
+        $this->migrateStructure($mock);
     }
 
     /** @test */
@@ -81,22 +73,21 @@ class MigrationsUpgradeTest extends TestCase
         $this->assertEquals(1, Permission::whereName('test')->count());
     }
 
-    protected function role($name)
+    private function migrateStructure($mock)
     {
-        return Role::factory()->create([
-            'name' => $name,
-        ]);
-    }
-
-    private function migrateStructure()
-    {
-        (new Database(new Structure($this->upgrade)))->handle();
+        (new Database(new Migrations($mock)))->handle();
     }
 }
 
-class TestStructureMigration implements MigratesStructure
+class TestRenamesMigrations implements RenamesMigrations
 {
-    use StructureMigration;
+    public function from(): array
+    {
+        return [];
+    }
 
-    public $permissions = [];
+    public function to(): array
+    {
+        return [];
+    }
 }
