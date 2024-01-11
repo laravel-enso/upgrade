@@ -12,8 +12,8 @@ class Reflection
 {
     public static function reflection(Upgrade $upgrade): ReflectionClass
     {
-        return $upgrade instanceof Structure
-            ? $upgrade->reflection()
+        return $upgrade instanceof Structure || $upgrade instanceof Migrations
+            ? new ReflectionClass($upgrade->class())
             : new ReflectionClass($upgrade);
     }
 

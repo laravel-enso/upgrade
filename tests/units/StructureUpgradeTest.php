@@ -22,7 +22,7 @@ class StructureUpgradeTest extends TestCase
     {
         parent::setUp();
 
-        $this->upgrade = new TestStructureMigration();
+        $this->mock = $this->createMock(TestStructureMigration::class);
 
         $this->defaultRole = $this->role(Config::get('enso.config.defaultRole'));
 
@@ -32,9 +32,9 @@ class StructureUpgradeTest extends TestCase
     /** @test */
     public function can_migrate()
     {
-        $this->upgrade->permissions = [
+        $this->mock->method('permissions')->willReturn([
             ['name' => 'test', 'description' => 'test', 'is_default' => true],
-        ];
+        ]);
 
         $this->migrateStructure();
 
@@ -44,9 +44,9 @@ class StructureUpgradeTest extends TestCase
     /** @test */
     public function can_migrate_default_permission()
     {
-        $this->upgrade->permissions = [
+        $this->mock->method('permissions')->willReturn([
             ['name' => 'test', 'description' => 'test', 'is_default' => true],
-        ];
+        ]);
 
         $this->migrateStructure();
 
@@ -57,9 +57,9 @@ class StructureUpgradeTest extends TestCase
     /** @test */
     public function can_migrate_non_default_permission()
     {
-        $this->upgrade->permissions = [
+        $this->mock->method('permissions')->willReturn([
             ['name' => 'test', 'description' => 'test', 'is_default' => false],
-        ];
+        ]);
 
         $this->migrateStructure();
 
@@ -70,9 +70,9 @@ class StructureUpgradeTest extends TestCase
     /** @test */
     public function skips_existing_permissions()
     {
-        $this->upgrade->permissions = [
+        $this->mock->method('permissions')->willReturn([
             ['name' => 'test', 'description' => 'test', 'is_default' => true],
-        ];
+        ]);
 
         $this->migrateStructure();
         $this->migrateStructure();
@@ -89,13 +89,11 @@ class StructureUpgradeTest extends TestCase
 
     private function migrateStructure()
     {
-        (new Database(new Structure($this->upgrade)))->handle();
+        (new Database(new Structure($this->mock)))->handle();
     }
 }
 
 class TestStructureMigration implements MigratesStructure
 {
     use StructureMigration;
-
-    public $permissions = [];
 }

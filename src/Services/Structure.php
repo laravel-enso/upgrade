@@ -8,26 +8,11 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use LaravelEnso\Permissions\Models\Permission;
 use LaravelEnso\Roles\Models\Role;
-use LaravelEnso\Upgrade\Contracts\Applicable;
-use LaravelEnso\Upgrade\Contracts\MigratesData;
-use LaravelEnso\Upgrade\Contracts\MigratesPostDataMigration;
-use LaravelEnso\Upgrade\Contracts\MigratesStructure;
-use LaravelEnso\Upgrade\Contracts\Prioritization;
-use LaravelEnso\Upgrade\Contracts\Upgrade;
-use ReflectionClass;
 
-class Structure implements Upgrade, MigratesData, Prioritization, MigratesPostDataMigration, Applicable
+class Structure extends CustomUpgrade
 {
-    private MigratesStructure $upgrade;
     private Collection $existing;
     private Collection $roles;
-    private string $defaultRole;
-
-    public function __construct(MigratesStructure $upgrade)
-    {
-        $this->upgrade = $upgrade;
-        $this->defaultRole = Config::get('enso.config.defaultRole');
-    }
 
     public function isMigrated(): bool
     {
@@ -50,34 +35,9 @@ class Structure implements Upgrade, MigratesData, Prioritization, MigratesPostDa
 
         if (App::isLocal()) {
             $this->roles()
-                ->reject(fn ($role) => $role->name === $this->defaultRole)
+                ->reject(fn ($role) => $role->name === Config::get('enso.config.defaultRole'))
                 ->each->writeConfig();
         }
-    }
-
-    public function reflection()
-    {
-        return new ReflectionClass($this->upgrade);
-    }
-
-    public function priority(): int
-    {
-        return $this->upgrade instanceof Prioritization
-            ? $this->upgrade->priority()
-            : Prioritization::Default;
-    }
-
-    public function migratePostDataMigration(): void
-    {
-        if ($this->upgrade instanceof MigratesPostDataMigration) {
-            $this->upgrade->migratePostDataMigration();
-        }
-    }
-
-    public function applicable(): bool
-    {
-        return ! $this->upgrade instanceof Applicable
-            || $this->upgrade->applicable();
     }
 
     private function storeWithRoles(array $permission): void
@@ -90,9 +50,8 @@ class Structure implements Upgrade, MigratesData, Prioritization, MigratesPostDa
 
     private function syncRoles(Permission $permission): Collection
     {
-        return $this->roles()->when(! $permission->is_default, fn ($roles) => $roles
-            ->filter(fn ($role) => in_array($role->name, $this->upgrade->roles())
-                || $role->name === $this->defaultRole));
+        return $this->roles()->when(! $permission->is_default, fn ($roles) => $roles->filter(fn ($role) => in_array($role->name, $this->upgrade->roles())
+            || $role->name === Config::get('enso.config.defaultRole')));
     }
 
     private function roles(): Collection
