@@ -10,15 +10,14 @@ class Migrations extends CustomUpgrade
 {
     public function isMigrated(): bool
     {
-        return Collection::wrap($this->upgrade->to())
-            ->every(fn ($to) => DB::table('migrations')->whereMigration($to)
-                ->exists());
+        return Collection::wrap($this->class()->to())
+            ->every(fn ($to) => DB::table('migrations')->whereMigration($to)->exists());
     }
 
     public function migrateData(): void
     {
-        $to = Collection::wrap($this->upgrade->to())->sortKeys();
-        $from = Collection::wrap($this->upgrade->from())->sortKeys();
+        $to = Collection::wrap($this->class()->to())->sortKeys();
+        $from = Collection::wrap($this->class()->from())->sortKeys();
 
         $invalidMapping = $to->count() !== $from->count()
             || $to->keys()->diff($from->keys())->isNotEmpty();
