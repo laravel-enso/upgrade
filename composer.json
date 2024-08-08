@@ -17,8 +17,8 @@
         }
     ],
     "require": {
-        "laravel/framework": "^10.0",
-        "laravel-enso/core": "^9.0",
+        "laravel/framework": "^10.0|^11.0",
+        "laravel-enso/core": "^10.0",
         "laravel-enso/helpers": "^3.0",
         "laravel-enso/permissions": "^5.0",
         "laravel-enso/roles": "^5.0"
@@ -33,7 +33,7 @@
             "providers": [
                 "LaravelEnso\\Upgrade\\AppServiceProvider"
             ],
-            "aliases": {}
+            "aliases": []
         }
     }
 }
