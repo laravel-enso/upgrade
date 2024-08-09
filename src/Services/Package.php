@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use LaravelEnso\Helpers\Services\JsonReader;
 use LaravelEnso\Upgrade\Contracts\MigratesStructure;
+use LaravelEnso\Upgrade\Contracts\RenamesMigrations;
 use LaravelEnso\Upgrade\Contracts\Upgrade;
 use ReflectionClass;
 use Symfony\Component\Finder\SplFileInfo;
@@ -87,6 +88,7 @@ class Package
         $reflection = new ReflectionClass($class);
 
         return $reflection->implementsInterface(MigratesStructure::class)
+            || $reflection->implementsInterface(RenamesMigrations::class)
             || $reflection->implementsInterface(Upgrade::class);
     }
 }
