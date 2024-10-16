@@ -21,7 +21,8 @@
         "laravel-enso/core": "^10.0",
         "laravel-enso/helpers": "^3.0",
         "laravel-enso/permissions": "^5.0",
-        "laravel-enso/roles": "^5.0"
+        "laravel-enso/roles": "^5.0",
+        "doctrine/dbal": "^3.3"
     },
     "autoload": {
         "psr-4": {
