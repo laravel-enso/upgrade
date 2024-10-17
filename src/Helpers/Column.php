@@ -102,6 +102,6 @@ class Column
     private static function column(string $table, string $column): DoctrineColumn
     {
         return App::make(Connection::class)->introspectTable($table)
-            ->getColumn($table, $column);
+            ->getColumn($column);
     }
 }
