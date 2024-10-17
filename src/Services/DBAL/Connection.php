@@ -5,7 +5,6 @@ namespace LaravelEnso\Upgrade\Services\DBAL;
 use Doctrine\DBAL\Connection as DBALConnection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Facades\Config;
 
@@ -37,10 +36,5 @@ class Connection
     public function introspectTable(string $table): Table
     {
         return $this->schemaManager()->introspectTable($table);
-    }
-
-    public function column(string $table, string $column): Column
-    {
-        return $this->introspectTable($table)->getColumn($column);
     }
 }
