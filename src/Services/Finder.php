@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use LaravelEnso\Upgrade\Contracts\MigratesStructure;
+use LaravelEnso\Upgrade\Contracts\RenamesMigrations;
 
 class Finder
 {
@@ -30,10 +31,19 @@ class Finder
 
     private function upgradeClasses(Package $package): Collection
     {
-        return $package->upgradeClasses()
-            ->map(fn ($class) => new $class)
-            ->map(fn ($upgrade) => $upgrade instanceof MigratesStructure
-                ? new Structure($upgrade)
-                : new $upgrade);
+        return $package->upgradeClasses()->map(fn ($class) => $this->upgrade($class));
+    }
+
+    private function upgrade(string $class)
+    {
+        $upgrade = new $class();
+
+        if ($upgrade instanceof MigratesStructure) {
+            return new Structure($upgrade);
+        } elseif ($upgrade instanceof RenamesMigrations) {
+            return new Migrations($upgrade);
+        }
+
+        return $upgrade;
     }
 }
