@@ -4,8 +4,10 @@ namespace LaravelEnso\Upgrade\Helpers;
 
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use LaravelEnso\Upgrade\Services\DBAL\Connection;
 
 class Table
 {
@@ -16,7 +18,8 @@ class Table
 
     public static function hasIndex(string $table, string $index): bool
     {
-        $currentIndexes = Schema::getConnection()->getDoctrineSchemaManager()
+        $currentIndexes = App::make(Connection::class)
+            ->schemaManager()
             ->listTableIndexes($table);
 
         return Collection::wrap($currentIndexes)->has($index);
@@ -29,17 +32,15 @@ class Table
 
     public static function hasForeignKey(string $table, string $name): bool
     {
-        return Schema::getConnection()
-            ->getDoctrineSchemaManager()
-            ->listTableDetails($table)
+        return App::make(Connection::class)
+            ->introspectTable($table)
             ->hasForeignKey($name);
     }
 
     public static function foreignKey(string $table, string $name): ?ForeignKeyConstraint
     {
-        return Schema::getConnection()
-            ->getDoctrineSchemaManager()
-            ->listTableDetails($table)
+        return App::make(Connection::class)
+            ->introspectTable($table)
             ->getForeignKey($name);
     }
 

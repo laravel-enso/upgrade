@@ -32,7 +32,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "LaravelEnso\\Upgrade\\AppServiceProvider"
+                "LaravelEnso\\Upgrade\\AppServiceProvider",
+                "LaravelEnso\\Upgrade\\ConnectionServiceProvider"
             ],
             "aliases": []
         }
