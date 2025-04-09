@@ -14,6 +14,6 @@ class UpgradeStatus extends Command
 
     public function handle()
     {
-        $this->table(TableHeader::values()->toArray(), (new Service())->handle());
+        $this->table(TableHeader::mappings(), (new Service())->handle());
     }
 }

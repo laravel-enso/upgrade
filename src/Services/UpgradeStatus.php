@@ -14,21 +14,21 @@ class UpgradeStatus extends Upgrade
     public function handle()
     {
         return $this->sorted()->values()->map(fn (Contract $upgrade, $index) => [
-            TableHeader::NrCrt => $index + 1,
-            TableHeader::Package => Reflection::package($upgrade),
-            TableHeader::Upgrade => Reflection::upgrade($upgrade),
-            TableHeader::Applicable => $this->applicable($upgrade),
-            TableHeader::Manual => $this->isManual($upgrade),
-            TableHeader::Priority => $this->priority($upgrade),
-            TableHeader::Migration => $this->migration($upgrade),
-            TableHeader::Ran => $this->ran($upgrade),
-            TableHeader::LastModifiedAt => $this->changedAt($upgrade),
+            TableHeader::NrCrt->value => $index + 1,
+            TableHeader::Package->value => Reflection::package($upgrade),
+            TableHeader::Upgrade->value => Reflection::upgrade($upgrade),
+            TableHeader::Applicable->value => $this->applicable($upgrade),
+            TableHeader::Manual->value => $this->isManual($upgrade),
+            TableHeader::Priority->value => $this->priority($upgrade),
+            TableHeader::Migration->value => $this->migration($upgrade),
+            TableHeader::Ran->value => $this->ran($upgrade),
+            TableHeader::LastModifiedAt->value => $this->changedAt($upgrade),
         ]);
     }
 
     private function applicable(Contract $upgrade): string
     {
-        return ! $upgrade instanceof Applicable || $upgrade->applicable()
+        return !$upgrade instanceof Applicable || $upgrade->applicable()
             ? $this->green('yes')
             : $this->yellow('no');
     }
