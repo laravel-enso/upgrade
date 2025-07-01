@@ -76,7 +76,7 @@ class Structure implements Upgrade, MigratesData, Prioritization, MigratesPostDa
 
     public function applicable(): bool
     {
-        return ! $this->upgrade instanceof Applicable
+        return !$this->upgrade instanceof Applicable
             || $this->upgrade->applicable();
     }
 
@@ -90,8 +90,9 @@ class Structure implements Upgrade, MigratesData, Prioritization, MigratesPostDa
 
     private function syncRoles(Permission $permission): Collection
     {
-        return $this->roles()->when(! $permission->is_default, fn ($roles) => $roles
+        return $this->roles()->when(!$permission->is_default, fn ($roles) => $roles
             ->filter(fn ($role) => in_array($role->name, $this->upgrade->roles())
+                || in_array($role->id, $this->upgrade->roles())
                 || $role->name === $this->defaultRole));
     }
 
