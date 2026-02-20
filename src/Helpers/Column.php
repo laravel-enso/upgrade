@@ -61,7 +61,7 @@ class Column
 
     public static function isText(string $table, string $column): bool
     {
-        return self::isType($table, $column, 'boolean');
+        return self::isType($table, $column, 'text');
     }
 
     public static function isDate(string $table, string $column): bool
