@@ -76,7 +76,7 @@ class Column
 
     public static function isString(string $table, string $column): bool
     {
-        return self::isType($table, $column, 'string');
+        return self::isType($table, $column, 'varchar');
     }
 
     public static function getPrecision(string $table, string $column): int
