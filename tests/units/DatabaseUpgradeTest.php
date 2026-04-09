@@ -14,6 +14,7 @@ use LaravelEnso\Upgrade\Helpers\Table;
 use LaravelEnso\Upgrade\Services\Finder;
 use LaravelEnso\Upgrade\Services\Upgrade as Service;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class DatabaseUpgradeTest extends TestCase
 {
@@ -27,7 +28,7 @@ class DatabaseUpgradeTest extends TestCase
         static::$calls = [];
     }
 
-    /** @test */
+    #[Test]
     public function can_upgrade()
     {
         (new Service($this->finder(TestDatabaseMigration::class)))->handle();
@@ -37,7 +38,7 @@ class DatabaseUpgradeTest extends TestCase
         $this->assertNotEmpty(DB::table('test')->get());
     }
 
-    /** @test */
+    #[Test]
     public function can_upgrade_with_priorities()
     {
         (new Service($this->finder(
@@ -50,7 +51,7 @@ class DatabaseUpgradeTest extends TestCase
         ], static::$calls);
     }
 
-    /** @test */
+    #[Test]
     public function cannot_migrate_when_data_migration_fails()
     {
         $this->expectException(Exception::class);
@@ -60,7 +61,7 @@ class DatabaseUpgradeTest extends TestCase
         $this->assertFalse(Schema::hasTable('test'));
     }
 
-    /** @test */
+    #[Test]
     public function cannot_migrate_when_post_data_migration_fails()
     {
         $this->expectException(Exception::class);
@@ -70,7 +71,7 @@ class DatabaseUpgradeTest extends TestCase
         $this->assertFalse(Schema::hasTable('test'));
     }
 
-    /** @test */
+    #[Test]
     public function cannot_migrate_twice()
     {
         (new Service($this->finder(AlreadyMigratedMigrationTest::class)))->handle();
@@ -78,7 +79,7 @@ class DatabaseUpgradeTest extends TestCase
         $this->assertFalse(Schema::hasTable('test'));
     }
 
-    /** @test */
+    #[Test]
     public function cannot_migrate_not_applicable()
     {
         (new Service($this->finder(NotApplicable::class)))->handle();

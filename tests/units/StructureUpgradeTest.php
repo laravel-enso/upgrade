@@ -9,6 +9,7 @@ use LaravelEnso\Upgrade\Services\Database;
 use LaravelEnso\Upgrade\Services\Structure;
 use LaravelEnso\Upgrade\Traits\StructureMigration;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class StructureUpgradeTest extends TestCase
 {
@@ -29,7 +30,7 @@ class StructureUpgradeTest extends TestCase
         $this->secondaryRole = $this->role('secondaryRole');
     }
 
-    /** @test */
+    #[Test]
     public function can_migrate()
     {
         $this->upgrade->permissions = [
@@ -41,7 +42,7 @@ class StructureUpgradeTest extends TestCase
         $this->assertTrue(Permission::whereName('test')->exists());
     }
 
-    /** @test */
+    #[Test]
     public function can_migrate_default_permission()
     {
         $this->upgrade->permissions = [
@@ -54,7 +55,7 @@ class StructureUpgradeTest extends TestCase
         $this->assertEquals('test', $this->secondaryRole->permissions->first()->name);
     }
 
-    /** @test */
+    #[Test]
     public function can_migrate_non_default_permission()
     {
         $this->upgrade->permissions = [
@@ -67,7 +68,7 @@ class StructureUpgradeTest extends TestCase
         $this->assertEmpty($this->secondaryRole->permissions);
     }
 
-    /** @test */
+    #[Test]
     public function skips_existing_permissions()
     {
         $this->upgrade->permissions = [

@@ -12,6 +12,7 @@ use LaravelEnso\Upgrade\Contracts\MigratesStructure;
 use LaravelEnso\Upgrade\Services\Finder;
 use LaravelEnso\Upgrade\Services\Structure;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class FinderTest extends TestCase
 {
@@ -38,13 +39,13 @@ class FinderTest extends TestCase
         File::deleteDirectory($this->package());
     }
 
-    /** @test */
+    #[Test]
     public function should_not_find_classes_dont_implement_contracts()
     {
         $this->assertEmpty($this->getUpgrade(POPO::class));
     }
 
-    /** @test */
+    #[Test]
     public function can_find_structure_upgrade()
     {
         $structureUpgrade = $this->getUpgrade(Structure::class)
@@ -53,13 +54,13 @@ class FinderTest extends TestCase
         $this->assertEquals(StructureUpgrade::class, $structureUpgrade);
     }
 
-    /** @test */
+    #[Test]
     public function can_find_regular_upgrade()
     {
         $this->assertNotEmpty($this->getUpgrade(SimpleUpgrade::class));
     }
 
-    /** @test */
+    #[Test]
     public function can_find_deep_upgrade()
     {
         $this->assertNotEmpty($this->getUpgrade(DeepUpgrade::class));
