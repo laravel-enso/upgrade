@@ -21,11 +21,15 @@ class FinderTest extends TestCase
     protected MigratesStructure $upgrade;
     protected $defaultRole;
     protected $secondaryRole;
+    private array $folders = [];
+    private array $vendors = [];
 
     public function setUp(): void
     {
         parent::setUp();
 
+        $this->folders = Config::get('enso.upgrade.folders', []);
+        $this->vendors = Config::get('enso.upgrade.vendors', []);
         File::copyDirectory(__DIR__.'/../stubs', $this->package());
         $this->register();
         Config::set('enso.upgrade.folders', ['vendor/laravel-enso/testUpgrades']);
@@ -34,9 +38,11 @@ class FinderTest extends TestCase
 
     public function tearDown(): void
     {
-        parent::tearDown();
-
         File::deleteDirectory($this->package());
+        Config::set('enso.upgrade.folders', $this->folders);
+        Config::set('enso.upgrade.vendors', $this->vendors);
+
+        parent::tearDown();
     }
 
     #[Test]
