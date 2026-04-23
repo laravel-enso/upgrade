@@ -2,31 +2,30 @@
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
+use LaravelEnso\Upgrade\Testing\InteractsWithUpgradeFixtures;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CommandsTest extends TestCase
 {
     use RefreshDatabase;
+    use InteractsWithUpgradeFixtures;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        File::copyDirectory(__DIR__.'/../stubs', $this->package());
-        $this->register();
-        Config::set('enso.upgrade.folders', ['vendor/laravel-enso/testUpgrades']);
-        Config::set('enso.upgrade.vendors', []);
+        $this->setUpUpgradeFixture();
+        $this->configureUpgradeFixtureDiscovery();
         Config::set('enso.config.dateTimeFormat', 'Y-m-d H:i:s');
     }
 
     protected function tearDown(): void
     {
-        parent::tearDown();
+        $this->tearDownUpgradeFixture();
 
-        File::deleteDirectory($this->package());
+        parent::tearDown();
     }
 
     #[Test]
@@ -53,19 +52,4 @@ class CommandsTest extends TestCase
         $this->assertTrue(Schema::hasTable('command_manual_before_upgrades'));
     }
 
-    private function register(): void
-    {
-        $loader = require base_path().'/vendor/autoload.php';
-        $loader->setPsr4(
-            'LaravelEnso\TestUpgrade\\',
-            $this->package('src')
-        );
-    }
-
-    private function package(string $path = ''): string
-    {
-        $base = base_path('vendor/laravel-enso/testUpgrades');
-
-        return $path === '' ? $base : "{$base}/{$path}";
-    }
 }
